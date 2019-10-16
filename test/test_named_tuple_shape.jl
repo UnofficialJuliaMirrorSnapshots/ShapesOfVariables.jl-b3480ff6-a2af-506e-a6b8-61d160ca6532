@@ -8,8 +8,8 @@ using ArraysOfArrays
 import TypedTables
 
 
-@testset "varshapes" begin
-    @testset "VarShapes" begin
+@testset "named_tuple_shape" begin
+    @testset "functionality" begin
         get_y(x) = x.y
 
         data = VectorOfSimilarVectors(reshape(collect(1:22), 11, 2))
@@ -20,34 +20,34 @@ import TypedTables
             y = [[8, 9, 10, 11], [19, 20, 21, 22]]
         )
 
-        varshapes = @inferred VarShapes(
+        shape = @inferred NamedTupleShape(
             a = ArrayShape{Real}(2, 3),
             b = ScalarShape{Real}(),
             c = ConstValueShape(4.2),
             x = ConstValueShape([11 21; 12 22]),
             y = ArrayShape{Real}(4)
         )
-        @test @inferred(get_y(varshapes)) === ValueShapes._accessors(varshapes).y
-        @test @inferred(Base.propertynames(varshapes)) == (:a, :b, :c, :x, :y)
-        @test @inferred(totalndof(varshapes)) == 11
+        @test @inferred(get_y(shape)) === ValueShapes._accessors(shape).y
+        @test @inferred(Base.propertynames(shape)) == (:a, :b, :c, :x, :y)
+        @test @inferred(totalndof(shape)) == 11
 
-        @test @inferred(varshapes(data[1])) == ref_table[1]
-        @test @inferred(varshapes(data)) == ref_table
+        @test @inferred(shape(data[1])) == ref_table[1]
+        @test @inferred(shape(data)) == ref_table
     end
 
     @testset "examples" begin
         @test begin
-            varshapes = VarShapes(
+            shape = NamedTupleShape(
                 a = ArrayShape{Real}(2, 3),
                 b = ScalarShape{Real}(),
                 c = ConstValueShape(4.2),
                 x = ConstValueShape([11 21; 12 22]),
                 y = ArrayShape{Real}(4)
             )
-            data = VectorOfSimilarVectors{Int}(varshapes)
+            data = VectorOfSimilarVectors{Int}(shape)
             resize!(data, 10)
             rand!(flatview(data), 0:99)
-            table = varshapes(data)
+            table = shape(data)
             fill!(table.b, 42)
             all(x -> x == 42, view(flatview(data), 7, :))
         end

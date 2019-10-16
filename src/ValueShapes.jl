@@ -11,7 +11,11 @@ using MacroTools
 
 import TypedTables
 
-include("valueshape.jl")
-include("varshapes.jl")
+include("abstract_value_shape.jl")
+include("scalar_shape.jl")
+include("const_value_shape.jl")
+include("array_shape.jl")
+include("value_accessor.jl")
+include("named_tuple_shape.jl")
 
 end # module

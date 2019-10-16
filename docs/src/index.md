@@ -30,7 +30,7 @@ Building on this, ValueShapes provides a way to describe a set of
 named variables and their shapes:
 
 ```julia
-varshapes = VarShapes(
+NamedTupleShape = NamedTupleShape(
     a = ScalarShape{Real}(),
     b = ArrayShape{Real}(2, 3),
     c = ConstValueShape([1 2; 3 4])
@@ -41,7 +41,7 @@ varshapes = VarShapes(
 a fixed value. This set of variables has
 
 ```julia
-totalndof(varshapes) == 7
+totalndof(NamedTupleShape) == 7
 ```
 
 total degrees of freedom (the constant `c` does not contribute). Instead of
@@ -52,7 +52,7 @@ vector of length 7:
 ```julia
 using Random
 
-data = Vector{Float64}(undef, varshapes)
+data = Vector{Float64}(undef, NamedTupleShape)
 size(data) == (7,)
 rand!(data)
 ```
@@ -60,7 +60,7 @@ rand!(data)
 from which
 
 ```julia
-tupleview = varshapes(data)
+tupleview = NamedTupleShape(data)
 ```
 
 will construct a named tuple of the variable values, implemented as views
@@ -84,10 +84,10 @@ is designed to compose well with
 ```julia
 using ArraysOfArrays, Tables, TypedTables
 
-multidata = VectorOfSimilarVectors{Int}(varshapes)
+multidata = VectorOfSimilarVectors{Int}(NamedTupleShape)
 resize!(multidata, 10)
 rand!(flatview(multidata), 0:99)
 
-table = varshapes(multidata)
+table = NamedTupleShape(multidata)
 keys(Tables.columns(table)) == (:a, :b, :c)
 ```
